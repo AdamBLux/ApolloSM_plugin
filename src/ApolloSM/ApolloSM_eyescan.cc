@@ -345,22 +345,23 @@ SESout ApolloSM::SingleEyeScan(std::string const baseNode, std::string const lpm
     // poll END
     int count = 0;
     // one second max
-    while(1000000 > count) {
+    while(30000000 > count) {
       if(END == RegReadRegister(baseNode + "CTRL_STATUS")) {
 	// Scan has ended
 	break;
       }
-      // sleep 1 millisecond
+      // sleep 1 millisecond(micro?)
       usleep(1000);
       count++;
-      if(1000000 == count) {
-	throwException("BER sequence did not reach end in one second\n");
+      if(30000000 == count) {
+	throwException("BER sequence did not reach end in thirty seconds\n");
       }
     }	  
     
     // read error and sample count
     errorCount = RegReadRegister(baseNode + "ERROR_COUNT");
     sampleCount = RegReadRegister(baseNode + "SAMPLE_COUNT");
+    //printf("ERROR COUNT0=%.9f\n", errorCount);
     
     // Should sleep for some time before de-asserting run. Can be a race condition if we don't sleep
     
@@ -402,6 +403,8 @@ SESout ApolloSM::SingleEyeScan(std::string const baseNode, std::string const lpm
       }
         actualsample0=((1 << (1+prescale))*sampleCount*(float)actualDataWidth);
         errorCount0=errorCount;
+	//printf("FINAL ERROR0=%.9f\n",errorCount0);
+	//printf("-------------------------------");
 //      printf("Stopping single scan because: ");
 //      if(!(BER < PRECISION)) {
 //	printf("NOT BER < PRECISION\n");
@@ -448,7 +451,7 @@ SESout ApolloSM::SingleEyeScan(std::string const baseNode, std::string const lpm
       // poll END
       int count = 0;
       // one second max
-      while(1000000 > count) {
+      while(30000000 > count) {
 	if(END == RegReadRegister(baseNode + "CTRL_STATUS")) {
 	  // Scan has ended
 	  break;
@@ -456,15 +459,15 @@ SESout ApolloSM::SingleEyeScan(std::string const baseNode, std::string const lpm
 	// sleep 1 millisecond
 	usleep(1000);
 	count++;
-	if(1000000 == count) {
-	  throwException("BER sequence did not reach end in one second\n");
+	if(30000000 == count) {
+	  throwException("BER sequence did not reach end in thirty seconds\n");
 	}
       }	  
       
       // read error and sample count
       errorCount = RegReadRegister(baseNode + "ERROR_COUNT");
       sampleCount = RegReadRegister(baseNode + "SAMPLE_COUNT");
-      
+      //printf("ERROR COUNT1=%f\n", errorCount);
       // Should sleep for some time before de-asserting run. Can be a race condition if we don't sleep
       
       // Figure out the prescale and data width to calculate BER
@@ -505,6 +508,7 @@ SESout ApolloSM::SingleEyeScan(std::string const baseNode, std::string const lpm
                 }
                 actualsample1=((1 << (1+prescale))*sampleCount*(float)actualDataWidth);
                 errorCount1=errorCount;
+		//printf("FINAL ERROR COUNT1=%f\n", errorCount1);
         	//      printf("Stopping single scan because: ");
         	//      if(!(BER < PRECISION)) {
         	//	printf("NOT BER < PRECISION\n");
